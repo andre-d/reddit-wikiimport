@@ -1,5 +1,6 @@
 import json
-from r2.models import wiki
+from r2.models import wiki, subreddit
+from r2.lib.db.thing import NotFound
 
 AUTHOR_USER = 'reddit'
 
@@ -8,6 +9,11 @@ pages = json.load(f)
 
 for p in pages:
     sr = p['subreddit']
+    try:
+        sr = Subreddit._by_name(sr)
+    except NotFound:
+        print("WARNING! Subreddit %s not found" % sr)
+        continue
     page = p['page']
     try:
         p_obj = wiki.WikiPage.create(sr, page)
